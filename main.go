@@ -2,8 +2,6 @@ package main
 
 import (
 	"fmt"
-
-	"github.com/BenMemi/Go_Practice/apple"
 )
 
 func fibonaci(i int) (ret int) {
@@ -25,5 +23,4 @@ func main() {
 	for i = 0; i < 10; i++ {
 		fmt.Printf("%d ", fibonaci(i))
 	}
-	fmt.Println(apple.Subtract(10, 5))
 }

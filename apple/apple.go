@@ -1,6 +1,5 @@
 package apple
 
-func Subtract (a, b int) int {
+func Fubtract(a, b int) int {
 	return a - b
 }
-
