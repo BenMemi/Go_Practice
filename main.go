@@ -2,6 +2,9 @@ package main
 
 import (
 	"fmt"
+
+	"github.com/BenMemi/Go_Practice/apple"
+	"github.com/BenMemi/Go_Practice/sour"
 )
 
 func fibonaci(i int) (ret int) {
@@ -16,6 +19,14 @@ func fibonaci(i int) (ret int) {
 
 func add(a, b int) int {
 	return a + b
+}
+
+func addThenSubtract(a, b int) int {
+	return add(a, b) + apple.Fubtract(a, b)
+}
+
+func addThenSquare(a, b int) int {
+	return sour.Square(add(a, b))
 }
 
 func main() {
