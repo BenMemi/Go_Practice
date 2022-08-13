@@ -6,7 +6,32 @@ import (
 	"time"
 )
 
-//Note; throughout a lot of code it would've been better to pass out pointer references to messages/etc instead of copying them
+//General Thoughts
+//Built toward a kafka like structure
+//Brokers manage topics and consumer/producer
+//Consumers/Producers should be independent of each other and not block each other as much as possible
+//i.e. writes should not stop a consumer reading and vice versa
+//Consumers should not compete for messages, every consumer should get every single message
+//Should be able to have multiple producers to a topic
+//Topic performance should be independent. Topic 1 should not block topic 2 and vice versa
+//Consumers performance should be independent. Consumer 1 should not block consumer 2 and vice versa
+//Producer performance should be independent. Producer 1 should not block producer 2 and vice versa
+
+//Proposed Solution
+//Producers can produce independently of each other but writes happen one at a time so a log can be maintained
+
+//When a new message is produced to the log the topic manager will send a message to all consumers containing the message.
+//This sending will happen in a separate routine so it is asynchronous, the fanning out can happen in the fastest order possible
+
+//There should be functionality for a consumer to catch up on old records of the log (before they we're subscribed)
+//This can be an option
+//This "archive-stream" should finish before the consumer starts the normal subscription ideally to verify it worked but
+//the consumer should not miss any messages in the meanwhile or receive any message twice
+
+//Every single message sent should get a response back to confirm it was successfully delivered.
+//This allows for retrying in the case of a delivery failure
+
+//Note; throughout a lot of code it would've been better to pass out pointer references to messages and other objects instead of copying them
 //when processing reads (consumer requests)
 
 type Consumer struct {
