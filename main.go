@@ -349,6 +349,8 @@ func broker(id int) {
 			//topic manager is a separate process so it broker doesn't block read/writes from a topic, just registrations to the broker
 			go TopicManager(topic)
 			continue
+		//Kind of pointless to have subscriptions to broker and topic manager but keeping a record on the broker is still useful
+		//in case the topic manager needs to be restarted/etc
 		case subscribeRequest := <-subscribeRequests:
 			//some race conditions here in that you won't receive the message until you are appended to the array and then when the topic manager
 			//sees the consumer it will send that message to it, others will be missed
