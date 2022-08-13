@@ -346,6 +346,7 @@ func broker(id int) {
 			fmt.Println("Created topic: ", topic.name)
 			fmt.Println("There are now: ", len(broker.topics), " topics")
 			//TODO: for particularly popular/large topics we could boot up separate/more topic managers for a single topic
+			//topic manager is a separate process so it broker doesn't block read/writes from a topic, just registrations to the broker
 			go TopicManager(topic)
 			continue
 		case subscribeRequest := <-subscribeRequests:
@@ -441,7 +442,6 @@ func main() {
 	//sleep so go routine does not die before anything happens
 	time.Sleep(time.Second * 50)
 
-	//30 messages should be in topic by end
 	//Producers should not block consumers and vice versa
-	//Producers block eachother (writes only happen 1 at a time until partitions are implemented)
+	//Producers block each other (writes only happen 1 at a time until partitions are implemented)
 }
