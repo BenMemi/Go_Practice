@@ -349,6 +349,8 @@ func broker(id int) {
 			go TopicManager(topic)
 			continue
 		case subscribeRequest := <-subscribeRequests:
+			//some race conditions here in that you won't receive the message until you are appended to the array and then when the topic manager
+			//sees the consumer it will send that message to it, others will be missed
 			//add the consumer to the broker
 			broker.consumers = append(broker.consumers, subscribeRequest.consumer)
 			fmt.Println("Added consumer: ", subscribeRequest.consumer.id)
@@ -388,7 +390,29 @@ func main() {
 		registerConsumerChannel: make(chan subscribeRequest),
 		archive_request:         make(chan Consumer),
 	}
+
+	testTopic1 := topic{
+		name: "test1",
+		//partitions: 1,
+		//replicas:   1,
+		log:                     map[int]Message{},
+		length:                  0, //unnecessary but for clarity
+		writeChannel:            make(chan Message),
+		registerProducerChannel: make(chan registerProducerRequest),
+		producers:               []Producer{}, //unused currently but can be used for load balancing later
+		consumers:               []Consumer{},
+		registerConsumerChannel: make(chan subscribeRequest),
+		archive_request:         make(chan Consumer),
+	}
+
+	//This should be done by a function instead of just pushing from main()
+	createTopicRequests <- testTopic1
 	createTopicRequests <- testTopic2
+
+	go createConsumer(testTopic1, 123, 1, false)
+
+	go CreateProducer(testTopic1, 123, 1)
+
 	go createConsumer(testTopic2, 1, 0, false)
 
 	go CreateProducer(testTopic2, 1, 0)
